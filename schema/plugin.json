@@ -1,0 +1,19 @@
+{
+  "jupyter.lab.toolbars": {
+    "Notebook": [
+      {
+        "name": "lock-cells",
+        "command": "metadata-editor:lock-cells'"
+      },
+      {
+        "name": "unlock-cells",
+        "command": "metadata-editor:unlock-cells'"
+      }
+    ]
+  },
+  "title": "jupyterlab_cell_lock/toolbar-button",
+  "description": "jupyterlab_cell_lock/toolbar-button settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}
