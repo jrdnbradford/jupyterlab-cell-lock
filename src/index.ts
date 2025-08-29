@@ -31,7 +31,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
 
       // JupyterLab may omit "editable"/"deletable" when they are true,
-      // as this is the default. To handle this correctly, we treat
+      // as this is the default. To handle this correctly, the extension treats
       // missing values as true so the comparison logic works as expected.
       const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);
 
@@ -89,6 +89,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Add toolbar buttons
     tracker.widgetAdded.connect((_, notebookPanel) => {
       const lockButton = new ToolbarButton({
+        label: 'Lock all cells',
         icon: lockIcon,
         onClick: () => {
           app.commands.execute(lockCommand);
@@ -97,6 +98,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       });
 
       const unlockButton = new ToolbarButton({
+        label: 'Unlock all cells',
         icon: editIcon,
         onClick: () => {
           app.commands.execute(unlockCommand);
