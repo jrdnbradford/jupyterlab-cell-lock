@@ -1,0 +1,90 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ['*']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Base Setup
+      uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
+    - name: Install Dependencies and Build
+      run: |
+        set -eux
+        python -m pip install -U "jupyterlab>=4.0.0,<5"
+        jlpm
+        jlpm run lint:check
+        python -m pip install .
+
+    - name: Verify Extension Install
+      run: |
+        set -eux
+        jupyter labextension list 2>&1 | grep -ie "jupyterlab-cell-lock.*OK"
+        python -m jupyterlab.browser_check --no-browser-test
+
+    - name: Package Extension
+      run: |
+        set -eux
+        pip install build
+        python -m build
+        pip uninstall -y "jupyterlab_cell_lock" jupyterlab
+
+    - name: Upload Extension Packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: extension-artifacts
+        path: dist/jupyterlab_cell_lock*
+        if-no-files-found: error
+
+  integration-tests:
+    name: Integration tests
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Base Setup
+      uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
+    - name: Download extension package
+      uses: actions/download-artifact@v4
+      with:
+        name: extension-artifacts
+
+    - name: Install Extension and Dependencies
+      working-directory: ui-tests
+      run: |
+        set -eux
+        python -m pip install "jupyterlab>=4.0.0,<5" ../jupyterlab_cell_lock*.whl
+        jlpm install
+        jlpm playwright install chromium
+
+    - name: Execute Integration Tests
+      working-directory: ui-tests
+      run: |
+        jlpm playwright test
+
+    - name: Upload Playwright Test report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: jupyterlab_cell_lock-playwright-tests
+        path: |
+          ui-tests/test-results
+          ui-tests/playwright-report
