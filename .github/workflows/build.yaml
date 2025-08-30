@@ -67,18 +67,31 @@ jobs:
       with:
         name: extension-artifacts
 
-    - name: Install Extension and Dependencies
+    - name: Install Extension
       working-directory: ui-tests
-      # env:
-        # YARN_ENABLE_IMMUTABLE_INSTALLS: 0
-        # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       run: |
         set -eux
         python -m pip install "jupyterlab>=4.0.0,<5" ../jupyterlab_cell_lock*.whl
-        jlpm install
-        jlpm playwright install chromium
 
-    - name: Execute Integration Tests
+    - name: Install Dependencies
+      working-directory: ui-tests
+      env:
+        YARN_ENABLE_IMMUTABLE_INSTALLS: 0
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      run: jlpm install
+
+    - name: Set Up Browser Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ github.workspace }}/pw-browsers
+        key: ${{ runner.os }}-${{ hashFiles('ui-tests/yarn.lock') }}
+
+    - name: Install Browser
+      run: jlpm playwright install chromium
+      working-directory: ui-tests
+
+    - name: Execute UI Tests
       working-directory: ui-tests
       run: |
         jlpm playwright test
@@ -87,7 +100,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: jupyterlab_cell_lock-playwright-tests
+        name: jupyterlab-cell-lock-playwright-tests
         path: |
           ui-tests/test-results
           ui-tests/playwright-report
