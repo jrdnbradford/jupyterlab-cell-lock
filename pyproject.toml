@@ -34,14 +34,31 @@ fields = ["description", "authors", "urls", "keywords"]
 
 [tool.hatch.build]
 only-include = [
-  "src",
   "jupyterlab_cell_lock",
+  "src",
   "schema",
   "style",
   "install.json",
+  "package.json",
+  "yarn.lock",
+  "tsconfig.json",
   "README.md",
   "LICENSE",
   "pyproject.toml",
+]
+
+exclude = [
+  "venv/**",
+  "dist/**",
+  "build/**",
+  "*.egg-info/**",
+  "node_modules/**",
+  "__pycache__/**",
+  "*.pyc",
+  "*.pyo",
+  "ui-tests/**",
+  ".gitignore",
+  "environment.yml",
 ]
 
 [tool.hatch.build.targets.sdist]
