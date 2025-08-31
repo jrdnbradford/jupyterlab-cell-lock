@@ -1,7 +1,7 @@
 {
   "name": "jupyterlab-cell-lock-ui-tests",
   "version": "1.0.0",
-  "description": "jupyterlab-cell-lock Integration Tests",
+  "description": "jupyterlab-cell-lock UI Tests",
   "private": true,
   "scripts": {
     "start": "jupyter lab --config jupyter_server_test_config.py",
