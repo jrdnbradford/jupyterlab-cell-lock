@@ -1,6 +1,9 @@
-[![Build](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml/badge.svg)](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml)
+[![build](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml/badge.svg)](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml)
+[![PyPI version](https://img.shields.io/pypi/v/jupyterlab-cell-lock.svg)](https://pypi.org/project/jupyterlab-cell-lock/)
 
 # 🔒 jupyterlab-cell-lock
+
+![JupyterLab UI showing "Lock all cells" and "Unlock all cells" buttons in the toolbar with lock and edit icons, respectively](https://raw.githubusercontent.com/jrdnbradford/jupyterlab-cell-lock/main/docs/img/ui.png)
 
 A JupyterLab extension for easily locking cells, making them read-only and undeletable.
 
@@ -11,6 +14,12 @@ This extension modifies the cell metadata (`editable` and `deletable` fields) in
 ## 📝 Requirements
 
 - JupyterLab >= 4.0, < 5
+
+## 📦 Installation
+
+```sh
+pip install jupyterlab-cell-lock
+```
 
 # 💡 Use Cases
 

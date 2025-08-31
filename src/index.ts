@@ -8,11 +8,11 @@ import { lockIcon, editIcon } from '@jupyterlab/ui-components';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
 
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'metadata-editor:plugin',
+  id: 'jupyterlab-cell-lock:plugin',
   autoStart: true,
   requires: [INotebookTracker],
   activate: (app: JupyterFrontEnd, tracker: INotebookTracker) => {
-    console.log('jupyterlab_cell_lock extension activated!');
+    console.log('jupyterlab-cell-lock extension activated!');
 
     const toggleCellMetadata = (
       editable: boolean,
@@ -94,7 +94,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         onClick: () => {
           app.commands.execute(lockCommand);
         },
-        tooltip: 'Lock all cells (read-only & undeletable)'
+        tooltip: 'Make all cells read-only & undeletable'
       });
 
       const unlockButton = new ToolbarButton({
@@ -103,7 +103,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         onClick: () => {
           app.commands.execute(unlockCommand);
         },
-        tooltip: 'Unlock all cells (editable & deletable)'
+        tooltip: 'Make all cells editable & deletable'
       });
 
       notebookPanel.toolbar.insertItem(10, 'lockCells', lockButton);
