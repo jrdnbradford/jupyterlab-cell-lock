@@ -20,14 +20,21 @@ test.describe('Lock/Unlock Cell Interactions', () => {
     await page.click('jp-button:has-text("Lock all cells")');
     await page.waitForSelector('.jp-Dialog');
     await page.click('.jp-Dialog button.jp-mod-accept');
-    const deleteButton = page.locator('button[aria-label="Delete this cell (D, D)"]');
+    const deleteButton = page.locator(
+      'button[aria-label="Delete this cell (D, D)"]'
+    );
     const initialCellCount = await page.notebook.getCellCount();
     for (let i = 0; i < initialCellCount; i++) {
       await page.notebook.selectCells(0, 0);
       await deleteButton.click();
     }
     const finalCellCount = await page.notebook.getCellCount();
-    console.log("initialCellCount " + initialCellCount + "; finalCellCount " + finalCellCount)
+    console.log(
+      'initialCellCount ' +
+        initialCellCount +
+        '; finalCellCount ' +
+        finalCellCount
+    );
     expect(finalCellCount).toBe(initialCellCount);
   });
 
@@ -39,12 +46,17 @@ test.describe('Lock/Unlock Cell Interactions', () => {
 
     for (let i = 0; i < initialCellCount; i++) {
       await page.notebook.selectCells(i, i);
-      const cell = await page.notebook.getCellLocator(i)
+      const cell = await page.notebook.getCellLocator(i);
       const initialCellContent = await cell?.textContent();
       await page.notebook.enterCellEditingMode(i);
-      await page.keyboard.type("-test");
+      await page.keyboard.type('-test');
       const finalCellContent = await cell?.textContent();
-      console.log("initialCellContent: " + initialCellContent + "; finalCellContent: " + finalCellContent);
+      console.log(
+        'initialCellContent: ' +
+          initialCellContent +
+          '; finalCellContent: ' +
+          finalCellContent
+      );
       expect(initialCellContent).toBe(finalCellContent);
     }
   });

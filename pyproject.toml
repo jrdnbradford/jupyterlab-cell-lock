@@ -3,7 +3,7 @@ requires = ["hatchling>=1.5.0", "jupyterlab>=4.0.0,<5", "hatch-nodejs-version>=0
 build-backend = "hatchling.build"
 
 [project]
-name = "jupyterlab_cell_lock"
+name = "jupyterlab-cell-lock"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
@@ -37,8 +37,9 @@ artifacts = ["jupyterlab_cell_lock/labextension"]
 exclude = [".github", "binder"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"jupyterlab_cell_lock/labextension" = "share/jupyter/labextensions/@jupyterlab-lock/commands"
-"install.json" = "share/jupyter/labextensions/@jupyterlab-lock/commands/install.json"
+"jupyterlab_cell_lock/labextension" = "share/jupyter/labextensions/jupyterlab-cell-lock"
+"install.json" = "share/jupyter/labextensions/jupyterlab-cell-lock/commands/install.json"
+"schema/plugin.json" = "share/jupyter/lab/schemas/jupyterlab-cell-lock/plugin.json"
 
 [tool.hatch.build.hooks.version]
 path = "jupyterlab_cell_lock/_version.py"
