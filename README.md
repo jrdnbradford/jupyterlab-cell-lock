@@ -3,6 +3,8 @@
 
 # 🔒 jupyterlab-cell-lock
 
+![JupyterLab UI showing "Lock all cells" and "Unlock all cells" buttons in the toolbar with lock and edit icons, respectively](https://raw.githubusercontent.com/jrdnbradford/jupyterlab-cell-lock/main/docs/img/ui.png)
+
 A JupyterLab extension for easily locking cells, making them read-only and undeletable.
 
 ## ⚠️ Limitations
