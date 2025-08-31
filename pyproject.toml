@@ -39,6 +39,7 @@ exclude = [".github", "binder"]
 [tool.hatch.build.targets.wheel.shared-data]
 "jupyterlab_cell_lock/labextension" = "share/jupyter/labextensions/@jupyterlab-lock/commands"
 "install.json" = "share/jupyter/labextensions/@jupyterlab-lock/commands/install.json"
+"schema/plugin.json" = "share/jupyter/lab/schemas/jupyterlab-cell-lock/plugin.json"
 
 [tool.hatch.build.hooks.version]
 path = "jupyterlab_cell_lock/_version.py"
