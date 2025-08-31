@@ -94,7 +94,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         onClick: () => {
           app.commands.execute(lockCommand);
         },
-        tooltip: 'Lock all cells (read-only & undeletable)'
+        tooltip: 'Make all cells read-only & undeletable'
       });
 
       const unlockButton = new ToolbarButton({
@@ -103,7 +103,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         onClick: () => {
           app.commands.execute(unlockCommand);
         },
-        tooltip: 'Unlock all cells (editable & deletable)'
+        tooltip: 'Make all cells editable & deletable'
       });
 
       notebookPanel.toolbar.insertItem(10, 'lockCells', lockButton);
