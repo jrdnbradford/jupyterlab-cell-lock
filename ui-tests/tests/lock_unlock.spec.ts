@@ -33,7 +33,9 @@ async function setupNotebook(page: any) {
   await page.sidebar.close();
   await page.menu.clickMenuItem('File>New>Notebook');
   await page.click('button:has-text("Select")');
-  await page.waitForSelector('#jp-main-statusbar >> text=Python 3 (ipykernel) | Idle');
+  await page.waitForSelector(
+    '#jp-main-statusbar >> text=Python 3 (ipykernel) | Idle'
+  );
 }
 
 /**

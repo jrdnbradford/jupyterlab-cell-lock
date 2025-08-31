@@ -16,16 +16,16 @@ This extension modifies the cell metadata (`editable` and `deletable` fields) in
 
 ## Educators and Instructors
 
-- __Distributing Assignments__: You can provide a template notebook with introductory text, problem descriptions, or starter code in read-only cells. This prevents students from accidentally deleting or changing the core parts of the assignment, while still allowing them to add their answers in new or designated cells.
+- **Distributing Assignments**: You can provide a template notebook with introductory text, problem descriptions, or starter code in read-only cells. This prevents students from accidentally deleting or changing the core parts of the assignment, while still allowing them to add their answers in new or designated cells.
 
-- __Interactive Lecture Notes__: Share lecture notebooks with pre-populated, locked cells containing explanations and examples. Students can run the code, add their own notes, or experiment without altering your content.
+- **Interactive Lecture Notes**: Share lecture notebooks with pre-populated, locked cells containing explanations and examples. Students can run the code, add their own notes, or experiment without altering your content.
 
 ## Students and Learners
 
-- __Protecting Content__: When working with course material, tutorials, and assignments you can lock your notebook to ensure you don't accidentally delete or modify your work while experimenting with new cells.
+- **Protecting Content**: When working with course material, tutorials, and assignments you can lock your notebook to ensure you don't accidentally delete or modify your work while experimenting with new cells.
 
 ## Researchers and Teams
 
-- __Sharing Analyses and Code__: When sharing a notebook, you can lock the cells containing the final results, plots, and key methodology. This helps others on your team run the notebook and see the output without risk of accidentally changing the notebook.
+- **Sharing Analyses and Code**: When sharing a notebook, you can lock the cells containing the final results, plots, and key methodology. This helps others on your team run the notebook and see the output without risk of accidentally changing the notebook.
 
-- __Creating Templates__: Lock down template notebooks used for standard data analysis workflows. This ensures everyone on the team uses the same core steps while allowing them to add their own custom analyses.
+- **Creating Templates**: Lock down template notebooks used for standard data analysis workflows. This ensures everyone on the team uses the same core steps while allowing them to add their own custom analyses.
