@@ -1,4 +1,5 @@
-[![Build](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml/badge.svg)](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml)
+[![build](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml/badge.svg)](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml)
+[![PyPI version](https://img.shields.io/pypi/v/jupyterlab-cell-lock.svg)](https://pypi.org/project/jupyterlab-cell-lock/)
 
 # 🔒 jupyterlab-cell-lock
 
@@ -11,6 +12,12 @@ This extension modifies the cell metadata (`editable` and `deletable` fields) in
 ## 📝 Requirements
 
 - JupyterLab >= 4.0, < 5
+
+## 📦 Installation
+
+```sh
+pip install jupyterlab-cell-lock
+```
 
 # 💡 Use Cases
 
