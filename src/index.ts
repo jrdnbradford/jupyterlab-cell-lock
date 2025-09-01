@@ -69,7 +69,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     };
 
     // Define the lock command
-    const lockCommand = 'metadata-editor:lock-cells';
+    const lockCommand = 'jupyterlab-cell-lock:lock-cells';
     app.commands.addCommand(lockCommand, {
       label: 'Make All Cells Read-Only & Undeletable',
       execute: () => {
@@ -78,7 +78,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     });
 
     // Define the unlock command
-    const unlockCommand = 'metadata-editor:unlock-cells';
+    const unlockCommand = 'jupyterlab-cell-lock:unlock-cells';
     app.commands.addCommand(unlockCommand, {
       label: 'Make All Cells Editable & Deletable',
       execute: () => {

@@ -3,15 +3,15 @@
     "Notebook": [
       {
         "name": "lock-cells",
-        "command": "metadata-editor:lock-cells'"
+        "command": "jupyterlab-cell-lock:lock-cells'"
       },
       {
         "name": "unlock-cells",
-        "command": "metadata-editor:unlock-cells'"
+        "command": "jupyterlab-cell-lock:unlock-cells'"
       }
     ]
   },
-  "title": "jupyterlab_cell_lock/toolbar-button",
+  "title": "jupyterlab_cell_lock/toolbar-buttons",
   "description": "jupyterlab_cell_lock/toolbar-button settings.",
   "type": "object",
   "properties": {},
