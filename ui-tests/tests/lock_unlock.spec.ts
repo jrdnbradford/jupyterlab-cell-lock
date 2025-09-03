@@ -34,24 +34,34 @@ test.describe('Dialog Text Checks', () => {
   test('lock dialog shows correct message for cells', async ({ page }) => {
     const message = await getDialogMessage(page, 'Lock all cells');
     const cellCount = await page.notebook.getCellCount();
-    expect(message).toBe(`${cellCount} cells were successfully locked. All cells are now read-only and undeletable.`);
+    expect(message).toBe(
+      `${cellCount} cells were successfully locked. All cells are now read-only and undeletable.`
+    );
   });
 
-  test('unlock dialog shows correct message for all already locked cells', async ({ page }) => {
+  test('unlock dialog shows correct message for all already locked cells', async ({
+    page
+  }) => {
     await lockCells(page);
     const message = await getDialogMessage(page, 'Unlock all cells');
     const cellCount = await page.notebook.getCellCount();
-    expect(message).toBe(`${cellCount} cells were successfully unlocked. All cells are now editable and deletable.`);
+    expect(message).toBe(
+      `${cellCount} cells were successfully unlocked. All cells are now editable and deletable.`
+    );
   });
 
-  test('unlock dialog shows correct message after locking', async ({ page }) => {
+  test('unlock dialog shows correct message after locking', async ({
+    page
+  }) => {
     await lockCells(page);
     const initialCellCount = await page.notebook.getCellCount();
     await page.notebook.addCell('code', 'test');
     await page.waitForTimeout(500);
 
     const message = await getDialogMessage(page, 'Unlock all cells');
-    expect(message).toBe(`${initialCellCount} cells were successfully unlocked. 1 cell was already unlocked. All cells are now editable and deletable.`);
+    expect(message).toBe(
+      `${initialCellCount} cells were successfully unlocked. 1 cell was already unlocked. All cells are now editable and deletable.`
+    );
   });
 });
 
