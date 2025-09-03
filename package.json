@@ -1,6 +1,6 @@
 {
     "name": "jupyterlab-cell-lock",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "JupyterLab extension for easily locking cells, making them read-only and undeletable.",
     "keywords": [
         "jupyter",
