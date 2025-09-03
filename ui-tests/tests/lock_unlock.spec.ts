@@ -25,6 +25,46 @@ test.describe('Lock/Unlock Cell Interactions', () => {
   });
 });
 
+test.describe('Dialog Text Checks', () => {
+  test.beforeEach(async ({ page }) => {
+    await setupNotebook(page);
+    await createTestCells(page);
+  });
+
+  test('lock dialog shows correct message for cells', async ({ page }) => {
+    const message = await getDialogMessage(page, 'Lock all cells');
+    const cellCount = await page.notebook.getCellCount();
+    expect(message).toBe(
+      `${cellCount} cells were successfully locked. All cells are now read-only and undeletable.`
+    );
+  });
+
+  test('unlock dialog shows correct message for all already locked cells', async ({
+    page
+  }) => {
+    await lockCells(page);
+    const message = await getDialogMessage(page, 'Unlock all cells');
+    const cellCount = await page.notebook.getCellCount();
+    expect(message).toBe(
+      `${cellCount} cells were successfully unlocked. All cells are now editable and deletable.`
+    );
+  });
+
+  test('unlock dialog shows correct message after locking', async ({
+    page
+  }) => {
+    await lockCells(page);
+    const initialCellCount = await page.notebook.getCellCount();
+    await page.notebook.addCell('code', 'test');
+    await page.waitForTimeout(500);
+
+    const message = await getDialogMessage(page, 'Unlock all cells');
+    expect(message).toBe(
+      `${initialCellCount} cells were successfully unlocked. 1 cell was already unlocked. All cells are now editable and deletable.`
+    );
+  });
+});
+
 /**
  * Sets up a new notebook instance.
  * @param {import('@playwright/test').Page} page
@@ -43,9 +83,9 @@ async function setupNotebook(page: any) {
  * @param {import('@playwright/test').Page} page
  */
 async function createTestCells(page: any) {
-  await page.notebook.setCell(0, 'markdown', '# Test');
-  await page.notebook.addCell('code', 'print("Hello, world")');
-  await page.notebook.addCell('code', 'print("Hello, JupyterLab")');
+  await page.notebook.setCell(0, 'markdown', '# Hello, World');
+  await page.notebook.addCell('code', 'print("Hello, World")');
+  await page.notebook.addCell('raw', 'Hello, World)');
 }
 
 /**
@@ -110,4 +150,17 @@ async function testCellEditing(page: any, isLocked: boolean) {
       expect(finalCellContent).toBe(initialCellContent + '-test');
     }
   }
+}
+
+/**
+ * Clicks the specified button and retrieves the dialog message.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} buttonText
+ */
+async function getDialogMessage(page: any, buttonText: string) {
+  await page.click(`jp-button:has-text("${buttonText}")`);
+  await page.waitForSelector('.jp-Dialog-body');
+  const dialogBody = await page.locator('.jp-Dialog-body').textContent();
+  await page.click('.jp-Dialog button.jp-mod-accept');
+  return dialogBody;
 }

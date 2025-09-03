@@ -35,17 +35,19 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // missing values as true so the comparison logic works as expected.
       const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);
 
-      let count = 0;
+      let editedCellCount = 0;
+      let nonEditedCellCount = 0;
       for (let i = 0; i < cells.length; i++) {
         const cell = cells.get(i);
+        const isEditable = asBool(cell.getMetadata('editable'));
+        const isDeletable = asBool(cell.getMetadata('deletable'));
 
-        const curEditable = asBool(cell.getMetadata('editable'));
-        const curDeletable = asBool(cell.getMetadata('deletable'));
-
-        if (curEditable !== editable || curDeletable !== deletable) {
+        if (isEditable !== editable || isDeletable !== deletable) {
           cell.setMetadata('editable', editable);
           cell.setMetadata('deletable', deletable);
-          count++;
+          editedCellCount++;
+        } else {
+          nonEditedCellCount++;
         }
       }
 
@@ -54,12 +56,23 @@ const plugin: JupyterFrontEndPlugin<void> = {
         ? 'editable and deletable.'
         : 'read-only and undeletable.';
 
-      const dialogBody =
-        count === 0
-          ? `All cells were already ${action}.`
-          : `${count} cell${count > 1 ? 's' : ''} ${
-              count > 1 ? 'were' : 'was'
-            } successfully ${action}. All cells are now ${message}`;
+      let dialogBody = '';
+      if (editedCellCount === 0) {
+        dialogBody = `All cells were already ${action}.`;
+      } else {
+        // Create message for edited cells
+        dialogBody = `${editedCellCount} cell${editedCellCount > 1 ? 's' : ''} ${
+          editedCellCount > 1 ? 'were' : 'was'
+        } successfully ${action}.`;
+
+        // Create message for non-edited cells
+        if (nonEditedCellCount > 0) {
+          dialogBody += ` ${nonEditedCellCount} cell${nonEditedCellCount > 1 ? 's' : ''} ${
+            nonEditedCellCount > 1 ? 'were' : 'was'
+          } already ${action}.`;
+        }
+        dialogBody += ` All cells are now ${message}`;
+      }
 
       showDialog({
         title: `Cells ${action}`,
@@ -71,7 +84,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Define the lock command
     const lockCommand = 'jupyterlab-cell-lock:lock-cells';
     app.commands.addCommand(lockCommand, {
-      label: 'Make All Cells Read-Only & Undeletable',
+      label: 'Make All Current Cells Read-Only & Undeletable',
       execute: () => {
         toggleCellMetadata(false, false, tracker);
       }
@@ -80,7 +93,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Define the unlock command
     const unlockCommand = 'jupyterlab-cell-lock:unlock-cells';
     app.commands.addCommand(unlockCommand, {
-      label: 'Make All Cells Editable & Deletable',
+      label: 'Make All Currrent Cells Editable & Deletable',
       execute: () => {
         toggleCellMetadata(true, true, tracker);
       }
@@ -94,7 +107,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         onClick: () => {
           app.commands.execute(lockCommand);
         },
-        tooltip: 'Make all cells read-only & undeletable'
+        tooltip: 'Make all current cells read-only & undeletable'
       });
 
       const unlockButton = new ToolbarButton({
@@ -103,7 +116,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         onClick: () => {
           app.commands.execute(unlockCommand);
         },
-        tooltip: 'Make all cells editable & deletable'
+        tooltip: 'Make all current cells editable & deletable'
       });
 
       notebookPanel.toolbar.insertItem(10, 'lockCells', lockButton);
