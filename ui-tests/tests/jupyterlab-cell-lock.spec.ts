@@ -6,7 +6,7 @@ test.describe('Lock/Unlock Cell Interactions', () => {
     await createTestCells(page);
   });
 
-  test('unlocked cells can be edited and deleted', async ({ page }) => {
+  test('normal JupyterLab cell editing/deleting behavior', async ({ page }) => {
     await testCellDeletion(page, false);
     await testCellEditing(page, false);
   });
@@ -85,7 +85,7 @@ async function setupNotebook(page: any) {
 async function createTestCells(page: any) {
   await page.notebook.setCell(0, 'markdown', '# Hello, World');
   await page.notebook.addCell('code', 'print("Hello, World")');
-  await page.notebook.addCell('raw', 'Hello, World)');
+  await page.notebook.addCell('raw', 'Hello, World');
 }
 
 /**
