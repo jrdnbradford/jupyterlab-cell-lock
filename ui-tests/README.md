@@ -1,5 +1,5 @@
 # Integration Testing
-
+<!-- From https://github.com/jupyterlab/extension-examples -->
 This folder contains the integration tests of the extension.
 
 They are defined using [Playwright](https://playwright.dev/docs/intro) test runner
@@ -20,8 +20,14 @@ The default configuration will produce video for failing tests and an HTML repor
 
 To run the tests, you need to:
 
-1. Compile the extension:
+1. Install and compile the extension:
 
+Install the extension in editable mode (only need once):
+```sh
+python -m pip install -e .
+```
+
+Compile:
 ```sh
 jlpm install
 jlpm build:prod
