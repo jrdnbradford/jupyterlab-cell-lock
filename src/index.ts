@@ -61,7 +61,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       statusWidget = new CellLockStatus();
       statusBar.registerStatusItem('cellLockStatus', {
         item: statusWidget,
-        align: 'right'
+        align: 'middle'
       });
     }
 
