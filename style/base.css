@@ -1,5 +1,15 @@
-/*
-    See the JupyterLab Developer Guide for useful CSS Patterns:
+.jp-InputPrompt.jp-InputArea-prompt {
+  padding-left: 20px;
+}
 
-    https://jupyterlab.readthedocs.io/en/stable/developer/css.html
-*/
+.jp-CellLockIcon {
+  position: absolute;
+  left: 10px;
+  top: 47.5%;
+  transform: translateY(-50%);
+}
+
+.jp-CellLockIcon svg {
+  vertical-align: middle;
+  fill: var(--jp-ui-font-color1);
+}
