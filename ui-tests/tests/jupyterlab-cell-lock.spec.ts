@@ -35,9 +35,7 @@ test.describe('Status Bar Message Checks', () => {
     await clickAndWaitStatus(page, 'Lock all cells');
     const cellCount = await page.notebook.getCellCount();
     const message = await getStatusMessage(page);
-    expect(message).toBe(
-      `${cellCount} cells were successfully locked.`
-    );
+    expect(message).toBe(`${cellCount} cells were successfully locked.`);
   });
 
   test('unlock status message shows correct text for all locked cells', async ({
@@ -47,9 +45,7 @@ test.describe('Status Bar Message Checks', () => {
     await clickAndWaitStatus(page, 'Unlock all cells');
     const cellCount = await page.notebook.getCellCount();
     const message = await getStatusMessage(page);
-    expect(message).toBe(
-      `${cellCount} cells were successfully unlocked.`
-    );
+    expect(message).toBe(`${cellCount} cells were successfully unlocked.`);
   });
 
   test('unlock status message shows correct text after partial lock', async ({
