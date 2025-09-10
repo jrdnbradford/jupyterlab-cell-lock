@@ -25,32 +25,34 @@ test.describe('Lock/Unlock Cell Interactions', () => {
   });
 });
 
-test.describe('Dialog Text Checks', () => {
+test.describe('Status Bar Message Checks', () => {
   test.beforeEach(async ({ page }) => {
     await setupNotebook(page);
     await createTestCells(page);
   });
 
-  test('lock dialog shows correct message for cells', async ({ page }) => {
-    const message = await getDialogMessage(page, 'Lock all cells');
+  test('lock status message shows correct text', async ({ page }) => {
+    await clickAndWaitStatus(page, 'Lock all cells');
     const cellCount = await page.notebook.getCellCount();
+    const message = await getStatusMessage(page);
     expect(message).toBe(
-      `${cellCount} cells were successfully locked. All cells are now read-only and undeletable.`
+      `${cellCount} cells were successfully locked.`
     );
   });
 
-  test('unlock dialog shows correct message for all already locked cells', async ({
+  test('unlock status message shows correct text for all locked cells', async ({
     page
   }) => {
     await lockCells(page);
-    const message = await getDialogMessage(page, 'Unlock all cells');
+    await clickAndWaitStatus(page, 'Unlock all cells');
     const cellCount = await page.notebook.getCellCount();
+    const message = await getStatusMessage(page);
     expect(message).toBe(
-      `${cellCount} cells were successfully unlocked. All cells are now editable and deletable.`
+      `${cellCount} cells were successfully unlocked.`
     );
   });
 
-  test('unlock dialog shows correct message after locking', async ({
+  test('unlock status message shows correct text after partial lock', async ({
     page
   }) => {
     await lockCells(page);
@@ -58,16 +60,16 @@ test.describe('Dialog Text Checks', () => {
     await page.notebook.addCell('code', 'test');
     await page.waitForTimeout(500);
 
-    const message = await getDialogMessage(page, 'Unlock all cells');
+    await clickAndWaitStatus(page, 'Unlock all cells');
+    const message = await getStatusMessage(page);
     expect(message).toBe(
-      `${initialCellCount} cells were successfully unlocked. 1 cell was already unlocked. All cells are now editable and deletable.`
+      `${initialCellCount} cells were successfully unlocked. (1 already unlocked).`
     );
   });
 });
 
 /**
  * Sets up a new notebook instance.
- * @param {import('@playwright/test').Page} page
  */
 async function setupNotebook(page: any) {
   await page.sidebar.close();
@@ -80,7 +82,6 @@ async function setupNotebook(page: any) {
 
 /**
  * Creates the initial set of test cells.
- * @param {import('@playwright/test').Page} page
  */
 async function createTestCells(page: any) {
   await page.notebook.setCell(0, 'markdown', '# Hello, World');
@@ -90,34 +91,25 @@ async function createTestCells(page: any) {
 
 /**
  * Locks all cells in the notebook.
- * @param {import('@playwright/test').Page} page
  */
 async function lockCells(page: any) {
-  await page.click('jp-button:has-text("Lock all cells")');
-  await page.waitForSelector('.jp-Dialog');
-  await page.click('.jp-Dialog button.jp-mod-accept');
+  await clickAndWaitStatus(page, 'Lock all cells');
 }
 
 /**
  * Unlocks all cells in the notebook.
- * @param {import('@playwright/test').Page} page
  */
 async function unlockCells(page: any) {
-  await page.click('jp-button:has-text("Unlock all cells")');
-  await page.waitForSelector('.jp-Dialog');
-  await page.click('.jp-Dialog button.jp-mod-accept');
+  await clickAndWaitStatus(page, 'Unlock all cells');
 }
 
 /**
  * Tests cell deletion behavior.
- * @param {import('@playwright/test').Page} page
- * @param {boolean} isLocked
  */
 async function testCellDeletion(page: any, isLocked: boolean) {
   const initialCellCount = await page.notebook.getCellCount();
   for (let i = 0; i < initialCellCount; i++) {
     await page.notebook.selectCells(0, 0);
-    // The cell delete shortcut
     await page.keyboard.press('d');
     await page.keyboard.press('d');
   }
@@ -125,15 +117,12 @@ async function testCellDeletion(page: any, isLocked: boolean) {
   if (isLocked) {
     expect(finalCellCount).toBe(initialCellCount);
   } else {
-    // JupyterLab ensures there is always one cell
     expect(finalCellCount).toBe(1);
   }
 }
 
 /**
  * Tests cell editing behavior.
- * @param {import('@playwright/test').Page} page
- * @param {boolean} isLocked
  */
 async function testCellEditing(page: any, isLocked: boolean) {
   const initialCellCount = await page.notebook.getCellCount();
@@ -153,14 +142,16 @@ async function testCellEditing(page: any, isLocked: boolean) {
 }
 
 /**
- * Clicks the specified button and retrieves the dialog message.
- * @param {import('@playwright/test').Page} page
- * @param {string} buttonText
+ * Clicks a lock/unlock button and waits for a status message to appear.
  */
-async function getDialogMessage(page: any, buttonText: string) {
+async function clickAndWaitStatus(page: any, buttonText: string) {
   await page.click(`jp-button:has-text("${buttonText}")`);
-  await page.waitForSelector('.jp-Dialog-body');
-  const dialogBody = await page.locator('.jp-Dialog-body').textContent();
-  await page.click('.jp-Dialog button.jp-mod-accept');
-  return dialogBody;
+  await page.waitForSelector('.jp-CellLockStatus', { timeout: 2000 });
+}
+
+/**
+ * Gets the current transient status message text.
+ */
+async function getStatusMessage(page: any) {
+  return await page.locator('.jp-CellLockStatus').textContent();
 }
