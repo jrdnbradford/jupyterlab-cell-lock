@@ -1,10 +1,10 @@
 [![build](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml/badge.svg)](https://github.com/jrdnbradford/jupyterlab-cell-lock/actions/workflows/build.yaml)
 [![PyPI version](https://img.shields.io/pypi/v/jupyterlab-cell-lock.svg)](https://pypi.org/project/jupyterlab-cell-lock/)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/jupyterlab-cell-lock?label=PyPI%20downloads)
+![PyPI downloads](https://img.shields.io/pypi/dm/jupyterlab-cell-lock?label=PyPI%20downloads)
 
 # 🔒 jupyterlab-cell-lock
 
-![JupyterLab UI showing "Lock all cells" and "Unlock all cells" buttons in the toolbar with lock and edit icons, respectively](https://raw.githubusercontent.com/jrdnbradford/jupyterlab-cell-lock/main/docs/img/ui.png)
+![JupyterLab UI showing "Lock all cells" and "Unlock all cells" buttons in the toolbar with cell examples](https://raw.githubusercontent.com/jrdnbradford/jupyterlab-cell-lock/main/docs/img/ui.png)
 
 A JupyterLab extension for easily locking cells, making them read-only and undeletable.
 
@@ -34,7 +34,7 @@ Confirm installation:
 jupyter labextension list
 ```
 
-# 💡 Use Cases
+## 💡 Use Cases
 
 - **Educators Distributing Assignments and Notes**: Provide notebooks with text, problem descriptions, and code, helping prevent students from accidentally editing assignments/lecture notes while still allowing them to add their own notes/answers in new or designated cells.
 
