@@ -1,4 +1,5 @@
 import { lockIcon, editIcon } from '@jupyterlab/ui-components';
+
 import { CellLockStatus } from './status';
 
 export const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);

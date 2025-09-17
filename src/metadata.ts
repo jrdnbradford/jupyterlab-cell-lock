@@ -1,4 +1,5 @@
 import { INotebookTracker } from '@jupyterlab/notebook';
+
 import { applyCellIcon, asBool } from './icon';
 import { CellLockStatus } from './status';
 

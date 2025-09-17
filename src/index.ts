@@ -79,16 +79,40 @@ const plugin: JupyterFrontEndPlugin<void> = {
         refreshIcons(notebookPanel, statusWidget);
       });
 
-      // Apply icons for new cells
+      // Function to add output area listeners to a code cell
+      const addOutputListener = (cellWidget: any) => {
+        if (cellWidget.model.type === 'code' && cellWidget.outputArea) {
+          const outputAreaModel = cellWidget.outputArea.model;
+          outputAreaModel.changed.connect(() => {
+            setTimeout(() => {
+              applyCellIcon(cellWidget.model, cellWidget, statusWidget);
+            }, 10);
+          });
+          outputAreaModel.stateChanged.connect((sender: any, args: any) => {
+            if (args.name === 'outputs' || args.name === 'length') {
+              setTimeout(() => {
+                applyCellIcon(cellWidget.model, cellWidget, statusWidget);
+              }, 10);
+            }
+          });
+        }
+      };
+
+      // Add listeners to existing cells
+      notebook.widgets.forEach(cellWidget => {
+        addOutputListener(cellWidget);
+      });
+
+      // Handle new cells being added
       notebook.model?.cells.changed.connect((_, change) => {
         if (change.type === 'add') {
-          change.newValues.forEach((cellModel: any, idx) => {
+          change.newValues.forEach((cellModel, idx) => {
             const cellWidget = notebook.widgets[change.newIndex + idx];
             if (cellWidget) {
-              // Delay slightly to ensure the cell DOM is rendered
               setTimeout(() => {
                 applyCellIcon(cellModel, cellWidget, statusWidget);
-              }, 20);
+                addOutputListener(cellWidget);
+              }, 10);
             }
           });
         }
@@ -99,15 +123,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
         cellWidget.model.metadataChanged.connect(() => {
           applyCellIcon(cellWidget.model, cellWidget, statusWidget);
         });
-      });
-
-      // Refresh icons when the notebook content changes
-      notebook.stateChanged.connect((_, change) => {
-        if (change.name === 'activeCellIndex' || change.name === 'mode') {
-          setTimeout(() => {
-            refreshIcons(notebookPanel, statusWidget);
-          }, 50);
-        }
       });
 
       // Refresh on save
