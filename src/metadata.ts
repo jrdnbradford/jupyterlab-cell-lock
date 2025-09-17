@@ -1,5 +1,5 @@
 import { INotebookTracker } from '@jupyterlab/notebook';
-import { applyCellLockIcon, asBool } from './lockIcon';
+import { applyCellIcon, asBool } from './icon';
 import { CellLockStatus } from './status';
 
 export const toggleCellMetadata = (
@@ -31,7 +31,7 @@ export const toggleCellMetadata = (
       cellModel.setMetadata('editable', editable);
       cellModel.setMetadata('deletable', deletable);
       const cellWidget = notebook.widgets[i];
-      applyCellLockIcon(cellModel, cellWidget);
+      applyCellIcon(cellModel, cellWidget);
       editedCellCount++;
     } else {
       nonEditedCellCount++;

@@ -8,7 +8,7 @@ import { ToolbarButton } from '@jupyterlab/apputils';
 import { lockIcon, editIcon } from '@jupyterlab/ui-components';
 
 import { CellLockStatus } from './status';
-import { applyCellLockIcon, refreshLockIcons } from './lockIcon';
+import { applyCellIcon, refreshIcons } from './icon';
 import { toggleCellMetadata } from './metadata';
 
 const plugin: JupyterFrontEndPlugin<void> = {
@@ -77,7 +77,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Apply icons once the notebook is fully loaded and revealed
       Promise.all([context.ready, notebookPanel.revealed]).then(() => {
         console.log('Notebook ready and revealed, refreshing icons');
-        refreshLockIcons(notebookPanel);
+        refreshIcons(notebookPanel);
       });
 
       // Apply icons for new cells
@@ -88,7 +88,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             if (cellWidget) {
               // Delay slightly to ensure the cell DOM is rendered
               setTimeout(() => {
-                applyCellLockIcon(cellModel, cellWidget);
+                applyCellIcon(cellModel, cellWidget);
               }, 20);
             }
           });
@@ -98,7 +98,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Refresh on metadata change
       notebook.widgets.forEach(cellWidget => {
         cellWidget.model.metadataChanged.connect(() => {
-          applyCellLockIcon(cellWidget.model, cellWidget);
+          applyCellIcon(cellWidget.model, cellWidget);
         });
       });
 
@@ -106,7 +106,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       context.saveState.connect((_, state) => {
         if (state === 'completed') {
           console.log('Notebook saved, refreshing icons...');
-          refreshLockIcons(notebookPanel);
+          refreshIcons(notebookPanel);
         }
       });
     });
@@ -115,7 +115,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     tracker.activeCellChanged.connect(() => {
       const current = tracker.currentWidget;
       if (current) {
-        refreshLockIcons(current);
+        refreshIcons(current);
       }
     });
   }

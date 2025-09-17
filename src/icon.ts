@@ -2,7 +2,7 @@ import { lockIcon, editIcon } from '@jupyterlab/ui-components';
 
 export const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);
 
-export const applyCellLockIcon = (
+export const applyCellIcon = (
   cellModel: any,
   cellWidget: any,
   retryCount = 0
@@ -17,7 +17,7 @@ export const applyCellLockIcon = (
   if (!promptNode) {
     if (retryCount < 10) {
       setTimeout(() => {
-        applyCellLockIcon(cellModel, cellWidget, retryCount + 1);
+        applyCellIcon(cellModel, cellWidget, retryCount + 1);
       }, 10);
     }
     return;
@@ -51,7 +51,14 @@ export const applyCellLockIcon = (
       height: '14px',
       width: '14px'
     });
-    promptNode.appendChild(iconNode);
+
+    // Click to unlock
+    iconNode.addEventListener('click', () => {
+      cellModel.setMetadata('editable', true);
+      cellModel.setMetadata('deletable', true);
+      applyCellIcon(cellModel, cellWidget);
+    });
+
   } else {
     iconNode.title = 'This cell is editable and deletable.';
 
@@ -61,11 +68,19 @@ export const applyCellLockIcon = (
       height: '14px',
       width: '14px'
     });
-    promptNode.appendChild(iconNode);
+
+    // Click to lock
+    iconNode.addEventListener('click', () => {
+      cellModel.setMetadata('editable', false);
+      cellModel.setMetadata('deletable', false);
+      applyCellIcon(cellModel, cellWidget);
+    });
   }
+  promptNode.appendChild(iconNode);
 };
 
-export const refreshLockIcons = (notebookPanel: any) => {
+
+export const refreshIcons = (notebookPanel: any) => {
   if (!notebookPanel) {
     return;
   }
@@ -77,7 +92,7 @@ export const refreshLockIcons = (notebookPanel: any) => {
       notebook.widgets.forEach((cellWidget: any, i: number) => {
         const cellModel = notebook.model.cells.get(i);
         if (cellModel) {
-          applyCellLockIcon(cellModel, cellWidget);
+          applyCellIcon(cellModel, cellWidget);
         }
       });
     });
