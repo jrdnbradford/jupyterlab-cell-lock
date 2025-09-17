@@ -1,4 +1,4 @@
-import { lockIcon } from '@jupyterlab/ui-components';
+import { lockIcon, editIcon } from '@jupyterlab/ui-components';
 
 export const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);
 
@@ -28,10 +28,10 @@ export const applyCellLockIcon = (
     existing.remove();
   }
 
-  if (!editable || !deletable) {
-    const iconNode = document.createElement('span');
-    iconNode.className = 'jp-CellLockIcon';
+  const iconNode = document.createElement('span');
+  iconNode.className = 'jp-CellLockIcon';
 
+  if (!editable || !deletable) {
     let tooltipMessage = 'This cell is ';
     const isReadOnly = !editable;
     const isUndeletable = !deletable;
@@ -46,6 +46,16 @@ export const applyCellLockIcon = (
     iconNode.title = tooltipMessage;
 
     lockIcon.element({
+      container: iconNode,
+      elementPosition: 'left',
+      height: '14px',
+      width: '14px'
+    });
+    promptNode.appendChild(iconNode);
+  } else {
+    iconNode.title = 'This cell is editable and deletable.';
+
+    editIcon.element({
       container: iconNode,
       elementPosition: 'left',
       height: '14px',
