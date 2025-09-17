@@ -6,7 +6,7 @@ export const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);
 export const applyCellIcon = (
   cellModel: any,
   cellWidget: any,
-  statusWidget: CellLockStatus | null = null,
+  statusWidget: CellLockStatus,
   retryCount = 0
 ) => {
   const editable = asBool(cellModel.getMetadata('editable'));
@@ -32,6 +32,8 @@ export const applyCellIcon = (
 
   const iconNode = document.createElement('span');
   iconNode.className = 'jp-CellLockIcon';
+  iconNode.setAttribute('role', 'button');
+  iconNode.setAttribute('tabindex', '0');
 
   if (!editable || !deletable) {
     let tooltipMessage = 'This cell is ';
@@ -46,6 +48,7 @@ export const applyCellIcon = (
       tooltipMessage += 'undeletable but can be edited.';
     }
     iconNode.title = tooltipMessage;
+    iconNode.setAttribute('aria-label', 'Unlock cell');
 
     lockIcon.element({
       container: iconNode,
@@ -54,18 +57,26 @@ export const applyCellIcon = (
       width: '14px'
     });
 
-    // Click to unlock
-    iconNode.addEventListener('click', () => {
+    const unlockAction = () => {
       cellModel.setMetadata('editable', true);
       cellModel.setMetadata('deletable', true);
       applyCellIcon(cellModel, cellWidget, statusWidget);
       if (statusWidget) {
         statusWidget.setTemporaryStatus('Cell unlocked.');
       }
+    };
+
+    iconNode.addEventListener('click', unlockAction);
+    iconNode.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        unlockAction();
+      }
     });
 
   } else {
     iconNode.title = 'This cell is editable and deletable.';
+    iconNode.setAttribute('aria-label', 'Lock cell');
 
     editIcon.element({
       container: iconNode,
@@ -74,13 +85,21 @@ export const applyCellIcon = (
       width: '14px'
     });
 
-    // Click to lock
-    iconNode.addEventListener('click', () => {
+    // Handle click and keyboard events to lock
+    const lockAction = () => {
       cellModel.setMetadata('editable', false);
       cellModel.setMetadata('deletable', false);
       applyCellIcon(cellModel, cellWidget, statusWidget);
       if (statusWidget) {
         statusWidget.setTemporaryStatus('Cell locked.');
+      }
+    };
+
+    iconNode.addEventListener('click', lockAction);
+    iconNode.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        lockAction();
       }
     });
   }
@@ -89,7 +108,7 @@ export const applyCellIcon = (
 
 export const refreshIcons = (
   notebookPanel: any,
-  statusWidget: CellLockStatus | null = null
+  statusWidget: CellLockStatus
 ) => {
   if (!notebookPanel) {
     return;
@@ -97,7 +116,7 @@ export const refreshIcons = (
   const { content: notebook } = notebookPanel;
 
   if (notebook.model && notebook.widgets) {
-    console.log('Refreshing lock icons for', notebook.widgets.length, 'cells');
+    //console.log('Refreshing lock icons for', notebook.widgets.length, 'cells');
     requestAnimationFrame(() => {
       notebook.widgets.forEach((cellWidget: any, i: number) => {
         const cellModel = notebook.model.cells.get(i);

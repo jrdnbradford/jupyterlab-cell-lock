@@ -6,7 +6,7 @@ export const toggleAllCellMetadata = (
   editable: boolean,
   deletable: boolean,
   tracker: INotebookTracker,
-  statusWidget: CellLockStatus | null
+  statusWidget: CellLockStatus
 ) => {
   const current = tracker.currentWidget;
   if (!current) {
@@ -31,7 +31,7 @@ export const toggleAllCellMetadata = (
       cellModel.setMetadata('editable', editable);
       cellModel.setMetadata('deletable', deletable);
       const cellWidget = notebook.widgets[i];
-      applyCellIcon(cellModel, cellWidget);
+      applyCellIcon(cellModel, cellWidget, statusWidget);
       editedCellCount++;
     } else {
       nonEditedCellCount++;
@@ -53,7 +53,5 @@ export const toggleAllCellMetadata = (
 
   if (statusWidget) {
     statusWidget.setTemporaryStatus(statusMessage);
-  } else {
-    console.log('[CellLockStatus]', statusMessage);
   }
 };

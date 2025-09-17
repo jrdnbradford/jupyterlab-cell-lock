@@ -13,7 +13,7 @@ export class CellLockStatus extends Widget {
     this.node.style.alignItems = 'center';
   }
 
-  setTemporaryStatus(summary: string, timeoutMs = 4000) {
+  setTemporaryStatus(summary: string, timeoutMs = 2000) {
     this._statusNode.innerText = summary;
     if (this._timer) {
       window.clearTimeout(this._timer);

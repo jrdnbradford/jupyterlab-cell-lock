@@ -23,7 +23,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   ) => {
     console.log('jupyterlab-cell-lock extension activated!');
 
-    let statusWidget: CellLockStatus | null = null;
+    let statusWidget: CellLockStatus;
     if (statusBar) {
       statusWidget = new CellLockStatus();
       statusBar.registerStatusItem('cellLockStatus', {
@@ -97,7 +97,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Refresh on metadata change
       notebook.widgets.forEach(cellWidget => {
         cellWidget.model.metadataChanged.connect(() => {
-          applyCellIcon(cellWidget.model, cellWidget);
+          applyCellIcon(cellWidget.model, cellWidget, statusWidget);
         });
       });
 
