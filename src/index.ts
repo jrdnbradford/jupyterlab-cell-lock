@@ -9,7 +9,7 @@ import { lockIcon, editIcon } from '@jupyterlab/ui-components';
 
 import { CellLockStatus } from './status';
 import { applyCellIcon, refreshIcons } from './icon';
-import { toggleCellMetadata } from './metadata';
+import { toggleAllCellMetadata } from './metadata';
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-cell-lock:plugin',
@@ -37,7 +37,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     app.commands.addCommand(lockCommand, {
       label: 'Make All Current Cells Read-Only & Undeletable',
       execute: () => {
-        toggleCellMetadata(false, false, tracker, statusWidget);
+        toggleAllCellMetadata(false, false, tracker, statusWidget);
       }
     });
 
@@ -46,7 +46,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     app.commands.addCommand(unlockCommand, {
       label: 'Make All Current Cells Editable & Deletable',
       execute: () => {
-        toggleCellMetadata(true, true, tracker, statusWidget);
+        toggleAllCellMetadata(true, true, tracker, statusWidget);
       }
     });
 
@@ -76,7 +76,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
       // Apply icons once the notebook is fully loaded and revealed
       Promise.all([context.ready, notebookPanel.revealed]).then(() => {
-        console.log('Notebook ready and revealed, refreshing icons');
+        // console.log('Notebook ready and revealed, refreshing icons');
         refreshIcons(notebookPanel);
       });
 
@@ -105,7 +105,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Refresh on save
       context.saveState.connect((_, state) => {
         if (state === 'completed') {
-          console.log('Notebook saved, refreshing icons...');
+          // console.log('Notebook saved, refreshing icons...');
           refreshIcons(notebookPanel);
         }
       });
