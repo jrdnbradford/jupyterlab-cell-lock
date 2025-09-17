@@ -76,8 +76,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
       // Apply icons once the notebook is fully loaded and revealed
       Promise.all([context.ready, notebookPanel.revealed]).then(() => {
-        // console.log('Notebook ready and revealed, refreshing icons');
-        refreshIcons(notebookPanel);
+        refreshIcons(notebookPanel, statusWidget);
       });
 
       // Apply icons for new cells
@@ -88,7 +87,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             if (cellWidget) {
               // Delay slightly to ensure the cell DOM is rendered
               setTimeout(() => {
-                applyCellIcon(cellModel, cellWidget);
+                applyCellIcon(cellModel, cellWidget, statusWidget);
               }, 20);
             }
           });
@@ -105,8 +104,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Refresh on save
       context.saveState.connect((_, state) => {
         if (state === 'completed') {
-          // console.log('Notebook saved, refreshing icons...');
-          refreshIcons(notebookPanel);
+          refreshIcons(notebookPanel, statusWidget);
         }
       });
     });
@@ -115,7 +113,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     tracker.activeCellChanged.connect(() => {
       const current = tracker.currentWidget;
       if (current) {
-        refreshIcons(current);
+        refreshIcons(current, statusWidget);
       }
     });
   }

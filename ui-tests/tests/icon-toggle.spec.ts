@@ -28,7 +28,6 @@ test.describe('Cell lock/edit icon interactions', () => {
     }
   });
 
-
   test('clicking edit icon locks the cell', async ({ page }) => {
     const firstIcon = page.locator('.jp-CellLockIcon').first();
     await firstIcon.click(); // Lock

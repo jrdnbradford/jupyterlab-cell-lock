@@ -1,10 +1,12 @@
 import { lockIcon, editIcon } from '@jupyterlab/ui-components';
+import { CellLockStatus } from './status';
 
 export const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);
 
 export const applyCellIcon = (
   cellModel: any,
   cellWidget: any,
+  statusWidget: CellLockStatus | null = null,
   retryCount = 0
 ) => {
   const editable = asBool(cellModel.getMetadata('editable'));
@@ -17,7 +19,7 @@ export const applyCellIcon = (
   if (!promptNode) {
     if (retryCount < 10) {
       setTimeout(() => {
-        applyCellIcon(cellModel, cellWidget, retryCount + 1);
+        applyCellIcon(cellModel, cellWidget, statusWidget, retryCount + 1);
       }, 10);
     }
     return;
@@ -56,7 +58,10 @@ export const applyCellIcon = (
     iconNode.addEventListener('click', () => {
       cellModel.setMetadata('editable', true);
       cellModel.setMetadata('deletable', true);
-      applyCellIcon(cellModel, cellWidget);
+      applyCellIcon(cellModel, cellWidget, statusWidget);
+      if (statusWidget) {
+        statusWidget.setTemporaryStatus('Cell unlocked.');
+      }
     });
 
   } else {
@@ -73,14 +78,19 @@ export const applyCellIcon = (
     iconNode.addEventListener('click', () => {
       cellModel.setMetadata('editable', false);
       cellModel.setMetadata('deletable', false);
-      applyCellIcon(cellModel, cellWidget);
+      applyCellIcon(cellModel, cellWidget, statusWidget);
+      if (statusWidget) {
+        statusWidget.setTemporaryStatus('Cell locked.');
+      }
     });
   }
   promptNode.appendChild(iconNode);
 };
 
-
-export const refreshIcons = (notebookPanel: any) => {
+export const refreshIcons = (
+  notebookPanel: any,
+  statusWidget: CellLockStatus | null = null
+) => {
   if (!notebookPanel) {
     return;
   }
@@ -92,7 +102,7 @@ export const refreshIcons = (notebookPanel: any) => {
       notebook.widgets.forEach((cellWidget: any, i: number) => {
         const cellModel = notebook.model.cells.get(i);
         if (cellModel) {
-          applyCellIcon(cellModel, cellWidget);
+          applyCellIcon(cellModel, cellWidget, statusWidget);
         }
       });
     });
