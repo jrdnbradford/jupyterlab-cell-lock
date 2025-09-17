@@ -101,6 +101,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
         });
       });
 
+      // Refresh icons when the notebook content changes
+      notebook.stateChanged.connect((_, change) => {
+        if (change.name === 'activeCellIndex' || change.name === 'mode') {
+          setTimeout(() => {
+            refreshIcons(notebookPanel, statusWidget);
+          }, 50);
+        }
+      });
+
       // Refresh on save
       context.saveState.connect((_, state) => {
         if (state === 'completed') {
