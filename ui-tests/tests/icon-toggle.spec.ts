@@ -13,7 +13,10 @@ test.describe('Cell lock/edit icon interactions', () => {
     await expect(icons).toHaveCount(initialCellCount);
 
     for (let i = 0; i < initialCellCount; i++) {
-      await expect(icons.nth(i)).toHaveAttribute('data-icon', 'ui-components:edit');
+      await expect(icons.nth(i)).toHaveAttribute(
+        'data-icon',
+        'ui-components:edit'
+      );
     }
   });
 
@@ -24,7 +27,10 @@ test.describe('Cell lock/edit icon interactions', () => {
     await expect(icons).toHaveCount(initialCellCount);
 
     for (let i = 0; i < initialCellCount; i++) {
-      await expect(icons.nth(i)).toHaveAttribute('data-icon', 'ui-components:lock');
+      await expect(icons.nth(i)).toHaveAttribute(
+        'data-icon',
+        'ui-components:lock'
+      );
     }
   });
 

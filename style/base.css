@@ -8,7 +8,9 @@
   top: 47.5%;
   transform: translateY(-50%);
   cursor: pointer;
-  transition: filter 0.2s ease, fill 0.2s ease;
+  transition:
+    filter 0.2s ease,
+    fill 0.2s ease;
 }
 
 .jp-CellLockIcon svg {

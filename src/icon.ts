@@ -67,13 +67,12 @@ export const applyCellIcon = (
     };
 
     iconNode.addEventListener('click', unlockAction);
-    iconNode.addEventListener('keydown', (event) => {
+    iconNode.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         unlockAction();
       }
     });
-
   } else {
     iconNode.title = 'This cell is editable and deletable.';
     iconNode.setAttribute('aria-label', 'Lock cell');
@@ -96,7 +95,7 @@ export const applyCellIcon = (
     };
 
     iconNode.addEventListener('click', lockAction);
-    iconNode.addEventListener('keydown', (event) => {
+    iconNode.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         lockAction();
