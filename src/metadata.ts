@@ -1,12 +1,13 @@
 import { INotebookTracker } from '@jupyterlab/notebook';
-import { applyCellLockIcon, asBool } from './lockIcon';
+
+import { applyCellIcon, asBool } from './icon';
 import { CellLockStatus } from './status';
 
-export const toggleCellMetadata = (
+export const toggleAllCellMetadata = (
   editable: boolean,
   deletable: boolean,
   tracker: INotebookTracker,
-  statusWidget: CellLockStatus | null
+  statusWidget: CellLockStatus
 ) => {
   const current = tracker.currentWidget;
   if (!current) {
@@ -31,7 +32,7 @@ export const toggleCellMetadata = (
       cellModel.setMetadata('editable', editable);
       cellModel.setMetadata('deletable', deletable);
       const cellWidget = notebook.widgets[i];
-      applyCellLockIcon(cellModel, cellWidget);
+      applyCellIcon(cellModel, cellWidget, statusWidget);
       editedCellCount++;
     } else {
       nonEditedCellCount++;
@@ -53,7 +54,5 @@ export const toggleCellMetadata = (
 
   if (statusWidget) {
     statusWidget.setTemporaryStatus(statusMessage);
-  } else {
-    console.log('[CellLockStatus]', statusMessage);
   }
 };

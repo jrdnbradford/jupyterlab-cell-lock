@@ -8,8 +8,8 @@ import { ToolbarButton } from '@jupyterlab/apputils';
 import { lockIcon, editIcon } from '@jupyterlab/ui-components';
 
 import { CellLockStatus } from './status';
-import { applyCellLockIcon, refreshLockIcons } from './lockIcon';
-import { toggleCellMetadata } from './metadata';
+import { applyCellIcon, refreshIcons } from './icon';
+import { toggleAllCellMetadata } from './metadata';
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-cell-lock:plugin',
@@ -23,7 +23,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   ) => {
     console.log('jupyterlab-cell-lock extension activated!');
 
-    let statusWidget: CellLockStatus | null = null;
+    let statusWidget: CellLockStatus;
     if (statusBar) {
       statusWidget = new CellLockStatus();
       statusBar.registerStatusItem('cellLockStatus', {
@@ -37,7 +37,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     app.commands.addCommand(lockCommand, {
       label: 'Make All Current Cells Read-Only & Undeletable',
       execute: () => {
-        toggleCellMetadata(false, false, tracker, statusWidget);
+        toggleAllCellMetadata(false, false, tracker, statusWidget);
       }
     });
 
@@ -46,7 +46,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     app.commands.addCommand(unlockCommand, {
       label: 'Make All Current Cells Editable & Deletable',
       execute: () => {
-        toggleCellMetadata(true, true, tracker, statusWidget);
+        toggleAllCellMetadata(true, true, tracker, statusWidget);
       }
     });
 
@@ -76,20 +76,43 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
       // Apply icons once the notebook is fully loaded and revealed
       Promise.all([context.ready, notebookPanel.revealed]).then(() => {
-        console.log('Notebook ready and revealed, refreshing icons');
-        refreshLockIcons(notebookPanel);
+        refreshIcons(notebookPanel, statusWidget);
       });
 
-      // Apply icons for new cells
+      // Function to add output area listeners to a code cell
+      const addOutputListener = (cellWidget: any) => {
+        if (cellWidget.model.type === 'code' && cellWidget.outputArea) {
+          const outputAreaModel = cellWidget.outputArea.model;
+          outputAreaModel.changed.connect(() => {
+            setTimeout(() => {
+              applyCellIcon(cellWidget.model, cellWidget, statusWidget);
+            }, 10);
+          });
+          outputAreaModel.stateChanged.connect((sender: any, args: any) => {
+            if (args.name === 'outputs' || args.name === 'length') {
+              setTimeout(() => {
+                applyCellIcon(cellWidget.model, cellWidget, statusWidget);
+              }, 10);
+            }
+          });
+        }
+      };
+
+      // Add listeners to existing cells
+      notebook.widgets.forEach(cellWidget => {
+        addOutputListener(cellWidget);
+      });
+
+      // Handle new cells being added
       notebook.model?.cells.changed.connect((_, change) => {
         if (change.type === 'add') {
-          change.newValues.forEach((cellModel: any, idx) => {
+          change.newValues.forEach((cellModel, idx) => {
             const cellWidget = notebook.widgets[change.newIndex + idx];
             if (cellWidget) {
-              // Delay slightly to ensure the cell DOM is rendered
               setTimeout(() => {
-                applyCellLockIcon(cellModel, cellWidget);
-              }, 20);
+                applyCellIcon(cellModel, cellWidget, statusWidget);
+                addOutputListener(cellWidget);
+              }, 10);
             }
           });
         }
@@ -98,15 +121,14 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Refresh on metadata change
       notebook.widgets.forEach(cellWidget => {
         cellWidget.model.metadataChanged.connect(() => {
-          applyCellLockIcon(cellWidget.model, cellWidget);
+          applyCellIcon(cellWidget.model, cellWidget, statusWidget);
         });
       });
 
       // Refresh on save
       context.saveState.connect((_, state) => {
         if (state === 'completed') {
-          console.log('Notebook saved, refreshing icons...');
-          refreshLockIcons(notebookPanel);
+          refreshIcons(notebookPanel, statusWidget);
         }
       });
     });
@@ -115,7 +137,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     tracker.activeCellChanged.connect(() => {
       const current = tracker.currentWidget;
       if (current) {
-        refreshLockIcons(current);
+        refreshIcons(current, statusWidget);
       }
     });
   }

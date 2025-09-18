@@ -44,4 +44,19 @@ test.describe('Status Bar Message Checks', () => {
       `${initialCellCount} cells were successfully unlocked. (1 already unlocked).`
     );
   });
+
+  test('single cell lock shows correct status', async ({ page }) => {
+    const firstIcon = page.locator('.jp-CellLockIcon').first();
+    await firstIcon.click(); // Lock
+    const message = await getStatusMessage(page);
+    expect(message).toBe(`Cell locked.`);
+  });
+
+  test('single cell unlock shows correct status', async ({ page }) => {
+    const firstIcon = page.locator('.jp-CellLockIcon').first();
+    await firstIcon.click(); // Lock
+    await firstIcon.click(); // Unlock
+    const message = await getStatusMessage(page);
+    expect(message).toBe(`Cell unlocked.`);
+  });
 });

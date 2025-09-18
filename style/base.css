@@ -7,9 +7,19 @@
   left: 10px;
   top: 47.5%;
   transform: translateY(-50%);
+  cursor: pointer;
+  transition:
+    filter 0.2s ease,
+    fill 0.2s ease;
 }
 
 .jp-CellLockIcon svg {
   vertical-align: middle;
   fill: var(--jp-ui-font-color1);
+  transition: fill 0.2s ease;
+}
+
+.jp-CellLockIcon:hover svg {
+  fill: var(--jp-brand-color1);
+  filter: drop-shadow(0 0 2px var(--jp-brand-color1));
 }
