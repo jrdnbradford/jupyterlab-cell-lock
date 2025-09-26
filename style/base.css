@@ -4,8 +4,8 @@
 
 .jp-CellLockIcon {
   position: absolute;
-  left: 10px;
-  top: 47.5%;
+  left: 8px;
+  top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   transition:
