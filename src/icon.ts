@@ -1,13 +1,30 @@
+import { NotebookPanel } from '@jupyterlab/notebook';
 import { lockIcon, editIcon } from '@jupyterlab/ui-components';
 
 import { CellLockStatus } from './status';
 
 export const asBool = (v: unknown) => (typeof v === 'boolean' ? v : true);
 
+const ICON_OPTS = {
+  elementPosition: 'left' as const,
+  height: '14px',
+  width: '14px'
+};
+
+const attachToggleAction = (iconNode: HTMLElement, action: () => void) => {
+  iconNode.addEventListener('click', action);
+  iconNode.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      action();
+    }
+  });
+};
+
 export const applyCellIcon = (
   cellModel: any,
   cellWidget: any,
-  statusWidget: CellLockStatus,
+  statusWidget: CellLockStatus | undefined,
   retryCount = 0
 ) => {
   const editable = asBool(cellModel.getMetadata('editable'));
@@ -26,10 +43,7 @@ export const applyCellIcon = (
     return;
   }
 
-  const existing = promptNode.querySelector('.jp-CellLockIcon');
-  if (existing) {
-    existing.remove();
-  }
+  promptNode.querySelector('.jp-CellLockIcon')?.remove();
 
   const iconNode = document.createElement('span');
   iconNode.className = 'jp-CellLockIcon';
@@ -38,88 +52,47 @@ export const applyCellIcon = (
 
   if (!editable || !deletable) {
     let tooltipMessage = 'This cell is ';
-    const isReadOnly = !editable;
-    const isUndeletable = !deletable;
-
-    if (isReadOnly && isUndeletable) {
+    if (!editable && !deletable) {
       tooltipMessage += 'read-only and undeletable.';
-    } else if (isReadOnly) {
+    } else if (!editable) {
       tooltipMessage += 'read-only but can be deleted.';
-    } else if (isUndeletable) {
+    } else {
       tooltipMessage += 'undeletable but can be edited.';
     }
     iconNode.title = tooltipMessage;
     iconNode.setAttribute('aria-label', 'Unlock cell');
-
-    lockIcon.element({
-      container: iconNode,
-      elementPosition: 'left',
-      height: '14px',
-      width: '14px'
-    });
-
-    const unlockAction = () => {
+    lockIcon.element({ container: iconNode, ...ICON_OPTS });
+    attachToggleAction(iconNode, () => {
       cellModel.setMetadata('editable', true);
       cellModel.setMetadata('deletable', true);
       applyCellIcon(cellModel, cellWidget, statusWidget);
-      if (statusWidget) {
-        statusWidget.setTemporaryStatus('Cell unlocked.');
-      }
-    };
-
-    iconNode.addEventListener('click', unlockAction);
-    iconNode.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        unlockAction();
-      }
+      statusWidget?.setTemporaryStatus('Cell unlocked.');
     });
   } else {
     iconNode.title = 'This cell is editable and deletable.';
     iconNode.setAttribute('aria-label', 'Lock cell');
-
-    editIcon.element({
-      container: iconNode,
-      elementPosition: 'left',
-      height: '14px',
-      width: '14px'
-    });
-
-    // Handle click and keyboard events to lock
-    const lockAction = () => {
+    editIcon.element({ container: iconNode, ...ICON_OPTS });
+    attachToggleAction(iconNode, () => {
       cellModel.setMetadata('editable', false);
       cellModel.setMetadata('deletable', false);
       applyCellIcon(cellModel, cellWidget, statusWidget);
-      if (statusWidget) {
-        statusWidget.setTemporaryStatus('Cell locked.');
-      }
-    };
-
-    iconNode.addEventListener('click', lockAction);
-    iconNode.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        lockAction();
-      }
+      statusWidget?.setTemporaryStatus('Cell locked.');
     });
   }
+
   promptNode.appendChild(iconNode);
 };
 
 export const refreshIcons = (
-  notebookPanel: any,
-  statusWidget: CellLockStatus
+  notebookPanel: NotebookPanel,
+  statusWidget: CellLockStatus | undefined
 ) => {
-  if (!notebookPanel) {
-    return;
-  }
   const { content: notebook } = notebookPanel;
 
   if (notebook.model && notebook.widgets) {
-    //console.log('Refreshing lock icons for', notebook.widgets.length, 'cells');
     requestAnimationFrame(() => {
-      notebook.widgets.forEach((cellWidget: any, i: number) => {
-        const cellModel = notebook.model.cells.get(i);
+      notebook.widgets.forEach((cellWidget, i) => {
+        const cellModel = notebook.model!.cells.get(i);
         if (cellModel) {
           applyCellIcon(cellModel, cellWidget, statusWidget);
         }
