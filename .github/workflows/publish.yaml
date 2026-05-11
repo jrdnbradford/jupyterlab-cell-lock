@@ -1,0 +1,82 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Base Setup
+      uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
+    - name: Install Dependencies and Build
+      run: |
+        set -eux
+        python -m pip install -U "jupyterlab>=4.0.0,<5"
+        jlpm
+        python -m pip install .
+
+    - name: Package Extension
+      run: |
+        set -eux
+        pip install build
+        jlpm build:prod
+        python -m build
+        pip uninstall -y "jupyterlab_cell_lock" jupyterlab
+
+    - name: Check Distribution
+      run: |
+        pip install twine
+        twine check dist/*
+
+    - name: Upload Distribution
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/jupyterlab_cell_lock*
+        if-no-files-found: error
+
+  publish-test-pypi:
+    name: Publish to Test PyPI
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+    - name: Download Distribution
+      uses: actions/download-artifact@v4
+      with:
+        name: dist
+        path: dist/
+
+    - name: Publish to Test PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+    - name: Download Distribution
+      uses: actions/download-artifact@v4
+      with:
+        name: dist
+        path: dist/
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1

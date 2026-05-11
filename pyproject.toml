@@ -40,6 +40,7 @@ only-include = [
   "install.json",
   "package.json",
   "yarn.lock",
+  ".yarnrc.yml",
   "tsconfig.json",
   "README.md",
   "LICENSE",
@@ -78,7 +79,6 @@ ensured-targets = [
     "jupyterlab_cell_lock/labextension/static/style.js",
     "jupyterlab_cell_lock/labextension/package.json",
 ]
-skip-if-exists = ["jupyterlab_cell_lock/labextension/static/style.js"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 build_cmd = "build:prod"
