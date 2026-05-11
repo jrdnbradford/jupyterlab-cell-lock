@@ -21,9 +21,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     tracker: INotebookTracker,
     statusBar: IStatusBar | null
   ) => {
-    console.log('jupyterlab-cell-lock extension activated!');
-
-    let statusWidget: CellLockStatus;
+    let statusWidget: CellLockStatus | undefined;
     if (statusBar) {
       statusWidget = new CellLockStatus();
       statusBar.registerStatusItem('cellLockStatus', {
@@ -32,7 +30,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
       });
     }
 
-    // Define the lock command
     const lockCommand = 'jupyterlab-cell-lock:lock-cells';
     app.commands.addCommand(lockCommand, {
       label: 'Make All Current Cells Read-Only & Undeletable',
@@ -41,7 +38,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     });
 
-    // Define the unlock command
     const unlockCommand = 'jupyterlab-cell-lock:unlock-cells';
     app.commands.addCommand(unlockCommand, {
       label: 'Make All Current Cells Editable & Deletable',
@@ -74,39 +70,30 @@ const plugin: JupyterFrontEndPlugin<void> = {
       notebookPanel.toolbar.insertItem(10, 'lockCells', lockButton);
       notebookPanel.toolbar.insertItem(11, 'unlockCells', unlockButton);
 
-      // Apply icons once the notebook is fully loaded and revealed
       Promise.all([context.ready, notebookPanel.revealed]).then(() => {
         refreshIcons(notebookPanel, statusWidget);
       });
 
-      // Function to add output area listeners to a code cell
       const addOutputListener = (cellWidget: any) => {
         if (cellWidget.model.type === 'code' && cellWidget.outputArea) {
-          const outputAreaModel = cellWidget.outputArea.model;
-          outputAreaModel.changed.connect(() => {
+          cellWidget.outputArea.model.changed.connect(() => {
             setTimeout(() => {
               applyCellIcon(cellWidget.model, cellWidget, statusWidget);
             }, 10);
           });
-          outputAreaModel.stateChanged.connect((sender: any, args: any) => {
-            if (args.name === 'outputs' || args.name === 'length') {
-              setTimeout(() => {
-                applyCellIcon(cellWidget.model, cellWidget, statusWidget);
-              }, 10);
-            }
-          });
         }
       };
 
-      // Add listeners to existing cells
-      notebook.widgets.forEach(cellWidget => {
+      notebook.widgets.forEach((cellWidget: any) => {
         addOutputListener(cellWidget);
+        cellWidget.model.metadataChanged.connect(() => {
+          applyCellIcon(cellWidget.model, cellWidget, statusWidget);
+        });
       });
 
-      // Handle new cells being added
-      notebook.model?.cells.changed.connect((_, change) => {
+      notebook.model?.cells.changed.connect((_, change: any) => {
         if (change.type === 'add') {
-          change.newValues.forEach((cellModel, idx) => {
+          change.newValues.forEach((cellModel: any, idx: number) => {
             const cellWidget = notebook.widgets[change.newIndex + idx];
             if (cellWidget) {
               setTimeout(() => {
@@ -118,14 +105,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
         }
       });
 
-      // Refresh on metadata change
-      notebook.widgets.forEach(cellWidget => {
-        cellWidget.model.metadataChanged.connect(() => {
-          applyCellIcon(cellWidget.model, cellWidget, statusWidget);
-        });
-      });
-
-      // Refresh on save
       context.saveState.connect((_, state) => {
         if (state === 'completed') {
           refreshIcons(notebookPanel, statusWidget);
@@ -133,7 +112,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
       });
     });
 
-    // Refresh when the active cell changes
     tracker.activeCellChanged.connect(() => {
       const current = tracker.currentWidget;
       if (current) {
