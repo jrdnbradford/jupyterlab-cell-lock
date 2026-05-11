@@ -7,6 +7,7 @@ Releases are published automatically via the [publish workflow](.github/workflow
 1. Bump the version in `package.json` (the only file to edit — everything else is generated).
 
 1. Rebuild the extension:
+
    ```sh
    conda env create -f environment.yml
    conda activate jupyterlab-cell-lock
@@ -14,6 +15,7 @@ Releases are published automatically via the [publish workflow](.github/workflow
    ```
 
 1. Commit and open a PR:
+
    ```sh
    git checkout -b release/vX.Y.Z
    git add .
@@ -22,6 +24,7 @@ Releases are published automatically via the [publish workflow](.github/workflow
    ```
 
 1. After the PR is merged, push a tag:
+
    ```sh
    git checkout main && git pull
    git tag vX.Y.Z
