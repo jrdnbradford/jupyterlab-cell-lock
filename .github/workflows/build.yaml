@@ -39,6 +39,7 @@ jobs:
       run: |
         set -eux
         pip install build
+        jlpm build:prod
         python -m build
         pip uninstall -y "jupyterlab_cell_lock" jupyterlab
 
