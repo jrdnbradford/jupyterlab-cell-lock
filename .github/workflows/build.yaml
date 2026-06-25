@@ -24,7 +24,7 @@ jobs:
     - name: Install Dependencies and Build
       run: |
         set -eux
-        python -m pip install -U "jupyter-builder>=1.0.0" "jupyterlab>=4.0.0,<5"
+        python -m pip install -U "jupyterlab>=4.0.0,<5"
         jlpm
         jlpm run lint:check
         python -m pip install .
@@ -39,7 +39,6 @@ jobs:
       run: |
         set -eux
         pip install build
-        jlpm build:prod
         python -m build
         pip uninstall -y "jupyterlab_cell_lock" jupyterlab
 
@@ -58,7 +57,7 @@ jobs:
       PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Base Setup
       uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1

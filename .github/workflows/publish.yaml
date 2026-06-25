@@ -18,20 +18,11 @@ jobs:
     - name: Base Setup
       uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
-    - name: Install Dependencies and Build
-      run: |
-        set -eux
-        python -m pip install -U "jupyter-builder>=1.0.0"
-        jlpm
-        python -m pip install .
-
-    - name: Package Extension
+    - name: Build Distribution
       run: |
         set -eux
         pip install build
-        jlpm build:prod
         python -m build
-        pip uninstall -y "jupyterlab_cell_lock" jupyter-builder
 
     - name: Check Distribution
       run: |
