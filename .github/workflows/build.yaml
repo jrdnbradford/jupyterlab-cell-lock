@@ -24,7 +24,7 @@ jobs:
     - name: Install Dependencies and Build
       run: |
         set -eux
-        python -m pip install -U "jupyterlab>=4.0.0,<5"
+        python -m pip install -U "jupyter-builder>=1.0.0" "jupyterlab>=4.0.0,<5"
         jlpm
         jlpm run lint:check
         python -m pip install .

@@ -21,7 +21,7 @@ jobs:
     - name: Install Dependencies and Build
       run: |
         set -eux
-        python -m pip install -U "jupyterlab>=4.0.0,<5"
+        python -m pip install -U "jupyter-builder>=1.0.0"
         jlpm
         python -m pip install .
 
@@ -31,7 +31,7 @@ jobs:
         pip install build
         jlpm build:prod
         python -m build
-        pip uninstall -y "jupyterlab_cell_lock" jupyterlab
+        pip uninstall -y "jupyterlab_cell_lock" jupyter-builder
 
     - name: Check Distribution
       run: |
